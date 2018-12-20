@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 import sys
 from sklearn.feature_selection import RFE
 from sklearn.ensemble import RandomForestClassifier
@@ -114,8 +115,8 @@ def main():
         die('--threshold {} must be between 0 and 1')
 
     X = pd.read_csv(infile)
-    target = X['target']
-    X.drop(['sample', 'target'], axis=1, inplace=True)
+    target = X['biome']
+    X.drop(['sample', 'biome'], axis=1, inplace=True)
     tfactors = target.factorize()
 
     if var_thresh > 0:
@@ -189,9 +190,14 @@ def main():
 
     plt.gcf().subplots_adjust(bottom=.3, left=.2)
 
-    if args.outfile:
-        print('Writing figure to "{}"'.format(args.outfile))
-        plt.savefig(args.outfile)
+    out_file = args.outfile
+    if out_file:
+        out_dir = os.path.dirname(os.path.abspath(out_file))
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
+
+        print('Writing figure to "{}"'.format(out_file))
+        plt.savefig(out_file)
 
     if not args.quiet:
         plt.show()
